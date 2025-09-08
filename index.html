@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Yushop - Preloved Items</title>
+    <link rel="icon" href="favicon/favicon.png" type="image/x-icon" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        font-family: "Poppins", sans-serif;
+      }
+
+      .typing-animation {
+        overflow: hidden;
+        border-right: 3px solid #ffd700;
+        white-space: nowrap;
+        animation: typing 2s steps(10, end), blink-caret 0.75s step-end infinite;
+      }
+
+      @keyframes typing {
+        from {
+          width: 0;
+        }
+        to {
+          width: 100%;
+        }
+      }
+
+      @keyframes blink-caret {
+        from,
+        to {
+          border-color: transparent;
+        }
+        50% {
+          border-color: #ffd700;
+        }
+      }
+
+      .fade-in {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.6s ease;
+      }
+
+      .fade-in.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .glow-hover:hover {
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+        transform: translateY(-2px);
+      }
+
+      .card-hover:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+      }
+
+      .carousel-container {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .carousel-track {
+        display: flex;
+        transition: transform 0.3s ease;
+      }
+
+      .carousel-slide {
+        min-width: 100%;
+        flex-shrink: 0;
+      }
+
+      .current-page {
+        color: #ffd700 !important;
+        font-weight: bold;
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal.active {
+        display: flex;
+      }
+
+      .modal-content {
+        max-width: 90vw;
+        max-height: 90vh;
+        position: relative;
+      }
+
+      .modal img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        color: white;
+        font-size: 30px;
+        cursor: pointer;
+        z-index: 1001;
+        background: rgba(0, 0, 0, 0.5);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .loading-spinner {
+        border: 3px solid rgba(255, 215, 0, 0.3);
+        border-radius: 50%;
+        border-top: 3px solid #ffd700;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .filter-container {
+        position: sticky;
+        top: 80px;
+        background: rgba(31, 41, 55, 0.95);
+        backdrop-filter: blur(10px);
+        z-index: 40;
+        border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+      }
+
+      .price-badge {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        font-weight: bold;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 0.9em;
+      }
+
+      .condition-badge {
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        color: white;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.8em;
+      }
+
+      .category-tag {
+        background: rgba(255, 215, 0, 0.1);
+        color: #ffd700;
+        border: 1px solid rgba(255, 215, 0, 0.3);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.7em;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .floating-whatsapp {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #25d366;
+        color: white;
+        padding: 15px;
+        border-radius: 50%;
+        box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+        z-index: 1000;
+        transition: all 0.3s ease;
+        animation: pulse 2s infinite;
+      }
+
+      .floating-whatsapp:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 30px rgba(37, 211, 102, 0.6);
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+        }
+        50% {
+          box-shadow: 0 4px 30px rgba(37, 211, 102, 0.7);
+        }
+        100% {
+          box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+        }
+      }
+
+      .search-container {
+        position: relative;
+      }
+
+      .search-input {
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(255, 215, 0, 0.3);
+        color: white;
+        padding: 12px 45px 12px 15px;
+        border-radius: 25px;
+        width: 100%;
+        transition: all 0.3s ease;
+      }
+
+      .search-input:focus {
+        outline: none;
+        border-color: #ffd700;
+        background: rgba(255, 255, 255, 0.15);
+      }
+
+      .search-button {
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: #ffd700;
+        color: #1f2937;
+        padding: 8px;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+      }
+
+      .search-button:hover {
+        background: #ffc107;
+        transform: translateY(-50%) scale(1.1);
+      }
+
+      .no-results {
+        text-align: center;
+        padding: 60px 20px;
+        color: #9ca3af;
+      }
+
+      .breadcrumb {
+        color: #9ca3af;
+        font-size: 0.9em;
+        margin-bottom: 20px;
+      }
+
+      .breadcrumb a {
+        color: #ffd700;
+        text-decoration: none;
+      }
+
+      .breadcrumb a:hover {
+        text-decoration: underline;
+      }
+
+      .image-loading {
+        background: linear-gradient(
+          90deg,
+          #374151 25%,
+          #4b5563 50%,
+          #374151 75%
+        );
+        background-size: 200% 100%;
+        animation: loading 2s infinite;
+      }
+
+      @keyframes loading {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
+      }
+    </style>
+  </head>
+
+  <body class="bg-gray-900 text-white overflow-x-hidden">
+    <!-- Navigation -->
+    <nav
+      class="fixed top-0 w-full bg-gray-800/90 backdrop-blur-sm z-50 border-b border-yellow-500/20"
+    >
+      <div
+        class="container mx-auto px-6 py-4 flex justify-between items-center"
+      >
+        <h1
+          class="text-2xl font-bold text-yellow-400 cursor-pointer"
+          onclick="showPage('home')"
+        >
+          Yushop
+        </h1>
+        <div class="flex items-center space-x-6">
+          <!-- Search Bar for Desktop -->
+          <div class="hidden md:block search-container">
+            <input
+              type="text"
+              placeholder="Cari produk..."
+              class="search-input w-64"
+              id="search-input"
+              onkeyup="handleSearch(event)"
+            />
+            <button class="search-button" onclick="performSearch()">
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                ></path>
+              </svg>
+            </button>
+          </div>
+          <a
+            href="#home"
+            class="hover:text-yellow-400 transition-colors duration-300"
+            onclick="showPage('home')"
+            >Home</a
+          >
+          <a
+            href="#products"
+            class="hover:text-yellow-400 transition-colors duration-300"
+            onclick="scrollToProducts()"
+            >Produk</a
+          >
+        </div>
+      </div>
+      <!-- Mobile Search -->
+      <div class="md:hidden px-6 pb-4">
+        <div class="search-container">
+          <input
+            type="text"
+            placeholder="Cari produk..."
+            class="search-input"
+            id="search-input-mobile"
+            onkeyup="handleSearch(event)"
+          />
+          <button class="search-button" onclick="performSearch()">
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              ></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section
+      id="home"
+      class="min-h-screen flex items-center justify-center relative overflow-hidden bg-cover bg-center"
+      style="background-image: url('images/hero3.jpg')"
+    >
+      <!-- Overlay -->
+      <div
+        class="absolute inset-0 bg-gradient-to-br from-black/70 via-black/60 to-black/70"
+      ></div>
+
+      <!-- Content -->
+      <div class="text-center z-10 px-6 max-w-4xl mx-auto">
+        <h1
+          class="text-5xl md:text-7xl font-bold text-yellow-400 mb-6 typing-animation"
+        >
+          YU-SHOP
+        </h1>
+        <p
+          class="text-xl md:text-2xl text-gray-300 mb-8 fade-in"
+          style="animation-delay: 3.5s; animation-fill-mode: forwards"
+        >
+          Barang bekas yusma tak jual disini, happy shopping
+        </p>
+        <button
+          onclick="scrollToProducts()"
+          class="bg-yellow-500 text-gray-900 font-semibold px-8 py-4 rounded-lg text-lg transition-all duration-300 glow-hover fade-in"
+          style="animation-delay: 4s; animation-fill-mode: forwards"
+        >
+          Lihat Produk
+        </button>
+      </div>
+
+      <!-- Scroll Down Icon -->
+      <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2">
+        <div class="animate-bounce">
+          <svg
+            class="w-6 h-6 text-yellow-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 14l-7 7m0 0l-7-7m7 7V3"
+            ></path>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filter Section -->
+    <div
+      class="filter-container py-4"
+      id="filter-section"
+      style="display: none"
+    >
+      <div class="container mx-auto px-6">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div class="flex flex-wrap items-center gap-4">
+            <select
+              id="category-filter"
+              class="bg-gray-700 border border-yellow-500/30 text-white px-4 py-2 rounded-lg focus:border-yellow-400 focus:outline-none"
+              onchange="applyFilters()"
+            >
+              <option value="">Semua Kategori</option>
+              <option value="Elektronik">Elektronik</option>
+              <option value="Audio">Audio</option>
+              <option value="Gaming">Gaming</option>
+              <option value="Kamera">Kamera</option>
+            </select>
+
+            <select
+              id="price-filter"
+              class="bg-gray-700 border border-yellow-500/30 text-white px-4 py-2 rounded-lg focus:border-yellow-400 focus:outline-none"
+              onchange="applyFilters()"
+            >
+              <option value="">Semua Harga</option>
+              <option value="0-5000000">Di bawah 5 Juta</option>
+              <option value="5000000-10000000">5-10 Juta</option>
+              <option value="10000000-999999999">Di atas 10 Juta</option>
+            </select>
+
+            <select
+              id="condition-filter"
+              class="bg-gray-700 border border-yellow-500/30 text-white px-4 py-2 rounded-lg focus:border-yellow-400 focus:outline-none"
+              onchange="applyFilters()"
+            >
+              <option value="">Semua Kondisi</option>
+              <option value="Mulus">Mulus</option>
+              <option value="Bekas 90%">Bekas 90%</option>
+              <option value="Bekas 95%">Bekas 95%</option>
+            </select>
+          </div>
+
+          <div class="text-sm text-gray-400" id="results-count">
+            Menampilkan semua produk
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <section id="products" class="py-20 bg-gray-800">
+      <div class="container mx-auto px-6">
+        <h2
+          class="text-4xl font-bold text-center text-yellow-400 mb-16 fade-in"
+        >
+          Produk Pilihan
+        </h2>
+
+        <!-- Loading Spinner -->
+        <div
+          id="loading-spinner"
+          class="flex justify-center items-center py-20"
+          style="display: none"
+        >
+          <div class="loading-spinner"></div>
+        </div>
+
+        <!-- Products Grid -->
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          id="products-grid"
+        >
+          <!-- Products will be loaded here by JavaScript -->
+        </div>
+
+        <!-- No Results Message -->
+        <div id="no-results" class="no-results" style="display: none">
+          <svg
+            class="w-16 h-16 mx-auto mb-4 text-gray-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.467-.881-6.077-2.33l-.853-.854L6.34 10.5a8.001 8.001 0 1113.32 0l1.269 1.316-.853.854A7.962 7.962 0 0112 15z"
+            ></path>
+          </svg>
+          <h3 class="text-xl font-semibold mb-2">Tidak ada produk ditemukan</h3>
+          <p>Coba ubah kata kunci pencarian atau filter yang digunakan</p>
+          <button
+            onclick="clearFilters()"
+            class="mt-4 bg-yellow-500 text-gray-900 px-6 py-2 rounded-lg hover:bg-yellow-400 transition-colors"
+          >
+            Reset Filter
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Product Detail Modal/Page -->
+    <div
+      id="product-detail"
+      class="hidden fixed inset-0 bg-gray-900 z-50 overflow-y-auto"
+    >
+      <div class="container mx-auto px-6 py-20">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+          <a href="#" onclick="closeProductDetail()">Produk</a> /
+          <span id="breadcrumb-product">Detail Produk</span>
+        </div>
+
+        <button
+          onclick="closeProductDetail()"
+          class="mb-6 text-yellow-400 hover:text-yellow-300 flex items-center transition-colors"
+        >
+          <svg
+            class="w-5 h-5 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 19l-7-7 7-7"
+            ></path>
+          </svg>
+          Kembali ke Produk
+        </button>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <!-- Image Carousel -->
+          <div class="space-y-4">
+            <div
+              class="carousel-container bg-gray-800 rounded-lg overflow-hidden relative"
+            >
+              <div class="carousel-track" id="carousel-track">
+                <!-- Images will be loaded here -->
+              </div>
+              <button
+                onclick="prevSlide()"
+                class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-yellow-500/80 text-gray-900 p-2 rounded-full hover:bg-yellow-400 transition-colors z-10"
+              >
+                <svg
+                  class="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 19l-7-7 7-7"
+                  ></path>
+                </svg>
+              </button>
+              <button
+                onclick="nextSlide()"
+                class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-yellow-500/80 text-gray-900 p-2 rounded-full hover:bg-yellow-400 transition-colors z-10"
+              >
+                <svg
+                  class="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 5l7 7-7 7"
+                  ></path>
+                </svg>
+              </button>
+
+              <!-- Image Counter -->
+              <div
+                class="absolute bottom-4 left-4 bg-black/50 text-white px-3 py-1 rounded-full text-sm"
+                id="image-counter"
+              >
+                1 / 1
+              </div>
+            </div>
+
+            <!-- Thumbnail Navigation -->
+            <div class="flex space-x-2 overflow-x-auto pb-2" id="thumbnail-nav">
+              <!-- Thumbnails will be loaded here -->
+            </div>
+          </div>
+
+          <!-- Product Info -->
+          <div class="space-y-6">
+            <div>
+              <h1
+                id="product-title"
+                class="text-4xl font-bold text-yellow-400 mb-2"
+              ></h1>
+              <div class="flex items-center space-x-2">
+                <span id="product-category-tag" class="category-tag"></span>
+                <span
+                  id="product-condition-badge"
+                  class="condition-badge"
+                ></span>
+              </div>
+            </div>
+
+            <div
+              class="price-badge inline-block text-2xl"
+              id="product-price"
+            ></div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div
+                class="bg-gray-800 p-4 rounded-lg border border-yellow-500/10"
+              >
+                <h3
+                  class="font-semibold text-yellow-400 mb-2 flex items-center"
+                >
+                  <svg
+                    class="w-5 h-5 mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    ></path>
+                  </svg>
+                  Kondisi
+                </h3>
+                <p id="product-condition" class="text-gray-300"></p>
+              </div>
+              <div
+                class="bg-gray-800 p-4 rounded-lg border border-yellow-500/10"
+              >
+                <h3
+                  class="font-semibold text-yellow-400 mb-2 flex items-center"
+                >
+                  <svg
+                    class="w-5 h-5 mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                    ></path>
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                    ></path>
+                  </svg>
+                  Lokasi COD
+                </h3>
+                <p id="product-location" class="text-gray-300"></p>
+              </div>
+            </div>
+
+            <div class="bg-gray-800 p-4 rounded-lg border border-yellow-500/10">
+              <h3 class="font-semibold text-yellow-400 mb-2 flex items-center">
+                <svg
+                  class="w-5 h-5 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                  ></path>
+                </svg>
+                Kategori
+              </h3>
+              <p id="product-category" class="text-gray-300"></p>
+            </div>
+
+            <div>
+              <h3 class="font-semibold text-yellow-400 mb-3 flex items-center">
+                <svg
+                  class="w-5 h-5 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.467-.881-6.077-2.33l-.853-.854L6.34 10.5a8.001 8.001 0 1113.32 0l1.269 1.316-.853.854A7.962 7.962 0 0112 15z"
+                  ></path>
+                </svg>
+                Deskripsi
+              </h3>
+              <p
+                id="product-description"
+                class="text-gray-300 leading-relaxed bg-gray-800 p-4 rounded-lg border border-yellow-500/10"
+              ></p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-4">
+              <button
+                onclick="contactWhatsApp()"
+                class="flex-1 bg-yellow-500 text-gray-900 font-semibold py-4 px-6 rounded-lg text-lg transition-all duration-300 glow-hover flex items-center justify-center space-x-2"
+              >
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                  <path
+                    d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"
+                  />
+                </svg>
+                <span>Tanya via WhatsApp</span>
+              </button>
+
+              <button
+                onclick="shareProduct()"
+                class="bg-gray-700 text-white font-semibold py-4 px-6 rounded-lg text-lg transition-all duration-300 hover:bg-gray-600 flex items-center justify-center space-x-2"
+              >
+                <svg
+                  class="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"
+                  ></path>
+                </svg>
+                <span>Share</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div id="image-modal" class="modal">
+      <div class="modal-content">
+        <span class="modal-close" onclick="closeImageModal()">&times;</span>
+        <img id="modal-image" src="" alt="Product Image" />
+      </div>
+    </div>
+
+    <!-- Floating WhatsApp Button -->
+    <a
+      href="https://wa.me/6281958436679"
+      target="_blank"
+      class="floating-whatsapp"
+    >
+      <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+        <path
+          d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"
+        />
+      </svg>
+    </a>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 border-t border-yellow-500/20 py-12">
+      <div class="container mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div>
+            <h3 class="text-2xl font-bold text-yellow-400 mb-4">Yushop</h3>
+            <p class="text-gray-400 mb-4">
+              Tempat terpercaya untuk membeli barang preloved berkualitas dengan
+              harga terjangkau di Banjarmasin.
+            </p>
+            <div class="flex space-x-4">
+              <a
+                href="#"
+                class="text-gray-400 hover:text-yellow-400 transition-colors"
+              >
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                  <path
+                    d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"
+                  />
+                </svg>
+              </a>
+              <a
+                href="#"
+                class="text-gray-400 hover:text-yellow-400 transition-colors"
+              >
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                  <path
+                    d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.093.112.108.210.080.325-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.728-1.378l-.742 2.811c-.269 1.041-.994 2.34-1.483 3.152C9.292 23.761 10.6 24.001 12.017 24.001c6.624 0 11.99-5.367 11.99-11.987C24.007 5.367 18.641.001 12.017.001z"
+                  />
+                </svg>
+              </a>
+              <a
+                href="#"
+                class="text-gray-400 hover:text-yellow-400 transition-colors"
+              >
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                  <path
+                    d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"
+                  />
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <h4 class="text-lg font-semibold text-yellow-400 mb-4">
+              Informasi
+            </h4>
+            <ul class="space-y-2 text-gray-400">
+              <li>
+                <a href="#" class="hover:text-yellow-400 transition-colors"
+                  >Tentang Kami</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-yellow-400 transition-colors"
+                  >Cara Belanja</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-yellow-400 transition-colors"
+                  >Syarat & Ketentuan</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-yellow-400 transition-colors"
+                  >Kebijakan Privasi</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 class="text-lg font-semibold text-yellow-400 mb-4">Kontak</h4>
+            <ul class="space-y-2 text-gray-400">
+              <li class="flex items-center">
+                <svg
+                  class="w-5 h-5 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                  ></path>
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                  ></path>
+                </svg>
+                Banjarmasin, Kalimantan Selatan
+              </li>
+              <li class="flex items-center">
+                <svg
+                  class="w-5 h-5 mr-2"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"
+                  />
+                </svg>
+                +62 812-3456-7890
+              </li>
+              <li class="flex items-center">
+                <svg
+                  class="w-5 h-5 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  ></path>
+                </svg>
+                yushop@gmail.com
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div
+          class="border-t border-yellow-500/20 mt-8 pt-8 text-center text-gray-400"
+        >
+          <p>&copy; 2025 Yushop. Semua hak dilindungi.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Sample product data dengan lebih banyak produk
+      const products = [
+        {
+          id: 1,
+          name: "Drone Potensic Atom 4K Basic (Bonus Tas)",
+          price: "Rp 3.000.000",
+          priceNumber: 3000000,
+          condition: "Bekas 90%",
+          location: "Banjarmasin, A.Yani KM.5 Dharma Praja",
+          category: "Elektronik",
+          description: `Potensic Atom 4K Basic + Bonus Tas Kamera
+
+            Drone kondisi masih normal, fungsi semua berjalan baik. Cocok untuk pemula maupun yang mencari drone ringkas dengan kamera 4K berkualitas.
+
+            Bonus: Tas kamera khusus untuk drone, lebih aman dan praktis dibawa ke mana saja.
+
+            Kelengkapan:
+            - 1 Unit Quad Drone Potensic Atom 4K Basic
+            - 1 Baterai
+            - Remote Control
+            - Printilan/aksesoris bawaan
+            - Kotak & kelengkapan lengkap
+
+            Minus:
+            - Slot SD card tidak bisa balik otomatis, masih bisa digunakan tapi harus ditarik manual (sedikit keras).
+
+            Lokasi COD: Jl. A. Yani KM 5, Dharma Praja, Banjarmasin
+            Bisa tanya-tanya dulu via WhatsApp sebelum transaksi.`,
+
+          images: [
+            "product/potensic-atom/1.jpg",
+            "product/potensic-atom/2.jpg",
+            "product/potensic-atom/3.jpg",
+            "product/potensic-atom/4.jpg",
+            "product/potensic-atom/5.jpg",
+            "product/potensic-atom/6.jpg",
+            "product/potensic-atom/7.jpg",
+          ],
+        },
+        // {
+        //   id: 2,
+        //   name: "MacBook Air M1",
+        //   price: "Rp 12.000.000",
+        //   priceNumber: 12000000,
+        //   condition: "Mulus",
+        //   location: "Banjarmasin, Kalimantan Selatan",
+        //   category: "Elektronik",
+        //   description:
+        //     "MacBook Air M1 2020, 8GB RAM, 256GB SSD. Kondisi mulus seperti baru, jarang dipakai karena WFH. Performa sangat cepat dan battery life luar biasa. Cocok untuk designer, programmer, atau mahasiswa. Lengkap dengan charger original dan dus.",
+        //   images: [
+        //     "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=500",
+        //     "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=500",
+        //     "https://images.unsplash.com/photo-1588702547923-7093a6c3ba33?w=500",
+        //     "https://images.unsplash.com/photo-1605150029433-a8111ed02de7?w=500",
+        //     "https://images.unsplash.com/photo-1594736797933-d0ffccf4b6ab?w=500",
+        //     "https://images.unsplash.com/photo-1524749292158-7540c2494485?w=500",
+        //     "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=500",
+        //   ],
+        // },
+        // {
+        //   id: 3,
+        //   name: "Sony WH-1000XM4",
+        //   price: "Rp 3.200.000",
+        //   priceNumber: 3200000,
+        //   condition: "Bekas 95%",
+        //   location: "Banjarmasin, Kalimantan Selatan",
+        //   category: "Audio",
+        //   description:
+        //     "Headphone wireless premium Sony WH-1000XM4 dengan Active Noise Cancelling terbaik di kelasnya. Kondisi sangat baik, audio quality luar biasa jernih. Cocok untuk musik, meeting online, atau traveling. Lengkap dengan case, kabel charging, dan kabel aux.",
+        //   images: [
+        //     "https://images.unsplash.com/photo-1545454675-3531b543be5d?w=500",
+        //     "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=500",
+        //     "https://images.unsplash.com/photo-1613040809024-b4ef7ba99bc3?w=500",
+        //     "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=500",
+        //     "https://images.unsplash.com/photo-1484704849700-f032a568e944?w=500",
+        //     "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500",
+        //     "https://images.unsplash.com/photo-1487215078519-e21cc028cb29?w=500",
+        //   ],
+        // },
+        // {
+        //   id: 4,
+        //   name: "iPad Pro 11 inch",
+        //   price: "Rp 9.500.000",
+        //   priceNumber: 9500000,
+        //   condition: "Mulus",
+        //   location: "Banjarmasin, Kalimantan Selatan",
+        //   category: "Elektronik",
+        //   description:
+        //     "iPad Pro 11 inch 2021, 128GB WiFi + Cellular. Dilengkapi dengan Apple Pencil Gen 2 dan Magic Keyboard. Kondisi sangat mulus, screen protector sudah terpasang sejak beli. Cocok untuk digital art, note taking, dan produktivitas. Lengkap dengan box dan charger.",
+        //   images: [
+        //     "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=500",
+        //     "https://images.unsplash.com/photo-1607853202273-797f1c22a38e?w=500",
+        //     "https://images.unsplash.com/photo-1561154464-82e9adf32764?w=500",
+        //     "https://images.unsplash.com/photo-1587033411391-5d9e51cce126?w=500",
+        //     "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=500",
+        //     "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500",
+        //     "https://images.unsplash.com/photo-1606770846414-4a1f58a5b0b4?w=500",
+        //   ],
+        // },
+        // {
+        //   id: 5,
+        //   name: "Nintendo Switch OLED",
+        //   price: "Rp 4.200.000",
+        //   priceNumber: 4200000,
+        //   condition: "Bekas 90%",
+        //   location: "Banjarmasin, Kalimantan Selatan",
+        //   category: "Gaming",
+        //   description:
+        //     "Nintendo Switch OLED model terbaru dengan layar yang lebih cerah dan vibrant. Include 3 game: Super Mario Odyssey, Zelda BOTW, dan Animal Crossing. Kondisi terawat, semua tombol responsif. Cocok untuk gaming portable atau di TV. Lengkap dengan dock, joy-con, dan aksesoris.",
+        //   images: [
+        //     "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=500",
+        //     "https://images.unsplash.com/photo-1578303512597-81e6cc155b3e?w=500",
+        //     "https://images.unsplash.com/photo-1640955014216-75201056c829?w=500",
+        //     "https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=500",
+        //     "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=500",
+        //     "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=500",
+        //     "https://images.unsplash.com/photo-1590736969955-71cc94901144?w=500",
+        //   ],
+        // },
+        // {
+        //   id: 6,
+        //   name: "Canon EOS M50 Mark II",
+        //   price: "Rp 7.800.000",
+        //   priceNumber: 7800000,
+        //   condition: "Mulus",
+        //   location: "Banjarmasin, Kalimantan Selatan",
+        //   category: "Kamera",
+        //   description:
+        //     "Kamera mirrorless Canon EOS M50 Mark II kit dengan lensa 15-45mm. Shutter count masih rendah (~2000 shots). Sangat cocok untuk content creator, vlogger, atau photographer pemula. Video quality 4K, autofocus cepat. Lengkap dengan battery, charger, strap, dan memory card 64GB.",
+        //   images: [
+        //     "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=500",
+        //     "https://images.unsplash.com/photo-1606983340126-99ab4feaa64a?w=500",
+        //     "https://images.unsplash.com/photo-1567450763746-5b5c3de52bd4?w=500",
+        //     "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=500",
+        //     "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=500",
+        //     "https://images.unsplash.com/photo-1514926718227-2a40db672ae1?w=500",
+        //     "https://images.unsplash.com/photo-1606983340200-7f31f6672b64?w=500",
+        //   ],
+        // },
+        // {
+        //   id: 7,
+        //   name: "Samsung Galaxy S22 Ultra",
+        //   price: "Rp 6.800.000",
+        //   priceNumber: 6800000,
+        //   condition: "Bekas 85%",
+        //   location: "Banjarmasin, Kalimantan Selatan",
+        //   category: "Elektronik",
+        //   description:
+        //     "Samsung Galaxy S22 Ultra 256GB dengan S Pen. Kamera 108MP yang sangat bagus untuk photography. Kondisi baik, ada sedikit lecet di frame tapi tidak mengganggu fungsi. Battery masih awet seharian. Lengkap dengan charger dan case.",
+        //   images: [
+        //     "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=500",
+        //     "https://images.unsplash.com/photo-1512499617640-c74ae3a79d37?w=500",
+        //     "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=500",
+        //   ],
+        // },
+        // {
+        //   id: 8,
+        //   name: "Apple Watch Series 7",
+        //   price: "Rp 4.500.000",
+        //   priceNumber: 4500000,
+        //   condition: "Mulus",
+        //   location: "Banjarmasin, Kalimantan Selatan",
+        //   category: "Elektronik",
+        //   description:
+        //     "Apple Watch Series 7 45mm GPS + Cellular. Kondisi sangat baik, jarang dipakai. Health tracking dan fitness features lengkap. Cocok untuk olahraga dan monitoring keseharian. Lengkap dengan charger dan beberapa strap cadangan.",
+        //   images: [
+        //     "https://images.unsplash.com/photo-1551816230-ef5deaed4a26?w=500",
+        //     "https://images.unsplash.com/photo-1434493789847-2f02dc6ca35d?w=500",
+        //     "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=500",
+        //   ],
+        // },
+      ];
+
+      let currentSlide = 0;
+      let currentProduct = null;
+      let filteredProducts = [...products];
+      let searchQuery = "";
+
+      // Load products on page load
+      document.addEventListener("DOMContentLoaded", function () {
+        loadProducts();
+        setupScrollAnimations();
+        showFilterSection();
+
+        // Auto-start typing animation
+        setTimeout(() => {
+          document.querySelector(".fade-in").classList.add("visible");
+        }, 3500);
+
+        // Handle keyboard navigation
+        document.addEventListener("keydown", handleKeyboardNavigation);
+      });
+
+      function showFilterSection() {
+        document.getElementById("filter-section").style.display = "block";
+      }
+
+      function loadProducts(productsToShow = filteredProducts) {
+        const grid = document.getElementById("products-grid");
+        const loadingSpinner = document.getElementById("loading-spinner");
+        const noResults = document.getElementById("no-results");
+
+        // Show loading spinner
+        loadingSpinner.style.display = "flex";
+        grid.innerHTML = "";
+        noResults.style.display = "none";
+
+        // Simulate loading delay for better UX
+        setTimeout(() => {
+          loadingSpinner.style.display = "none";
+
+          if (productsToShow.length === 0) {
+            noResults.style.display = "block";
+            updateResultsCount(0);
+            return;
+          }
+
+          productsToShow.forEach((product, index) => {
+            const productCard = document.createElement("div");
+            productCard.className =
+              "bg-gray-700 border border-yellow-500/20 rounded-lg overflow-hidden card-hover transition-all duration-300 fade-in cursor-pointer";
+            productCard.style.animationDelay = `${index * 0.1}s`;
+            productCard.onclick = () => openProductDetail(product.id);
+
+            productCard.innerHTML = `
+                        <div class="relative aspect-w-16 aspect-h-12 bg-gray-800">
+                            <img src="${product.images[0]}" alt="${product.name}" class="w-full h-64 object-cover image-loading" onload="this.classList.remove('image-loading')">
+                            <div class="absolute top-2 right-2 category-tag">${product.category}</div>
+                            <div class="absolute top-2 left-2 condition-badge">${product.condition}</div>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-semibold text-white mb-2 line-clamp-2">${product.name}</h3>
+                            <div class="price-badge inline-block mb-3 text-lg">${product.price}</div>
+                            <div class="flex items-center text-sm text-gray-400 mb-2">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                                ${product.location}
+                            </div>
+                            <button class="w-full bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 py-2 px-4 rounded-lg hover:bg-yellow-500/20 transition-colors text-sm font-medium">
+                                Lihat Detail
+                            </button>
+                        </div>
+                    `;
+
+            grid.appendChild(productCard);
+          });
+
+          updateResultsCount(productsToShow.length);
+
+          // Trigger fade-in animations
+          setTimeout(() => {
+            document.querySelectorAll(".fade-in").forEach((el) => {
+              el.classList.add("visible");
+            });
+          }, 100);
+        }, 500);
+      }
+
+      function updateResultsCount(count) {
+        const resultsCount = document.getElementById("results-count");
+        if (count === products.length) {
+          resultsCount.textContent = "Menampilkan semua produk";
+        } else {
+          resultsCount.textContent = `Menampilkan ${count} dari ${products.length} produk`;
+        }
+      }
+
+      function handleSearch(event) {
+        if (event.key === "Enter") {
+          performSearch();
+        }
+      }
+
+      function performSearch() {
+        const searchInput = document.getElementById("search-input");
+        const mobileSearchInput = document.getElementById(
+          "search-input-mobile"
+        );
+        searchQuery = (
+          searchInput?.value ||
+          mobileSearchInput?.value ||
+          ""
+        ).toLowerCase();
+        applyFilters();
+      }
+
+      function applyFilters() {
+        const categoryFilter = document.getElementById("category-filter").value;
+        const priceFilter = document.getElementById("price-filter").value;
+        const conditionFilter =
+          document.getElementById("condition-filter").value;
+
+        filteredProducts = products.filter((product) => {
+          const matchesSearch =
+            searchQuery === "" ||
+            product.name.toLowerCase().includes(searchQuery) ||
+            product.category.toLowerCase().includes(searchQuery) ||
+            product.description.toLowerCase().includes(searchQuery);
+
+          const matchesCategory =
+            categoryFilter === "" || product.category === categoryFilter;
+
+          const matchesCondition =
+            conditionFilter === "" || product.condition === conditionFilter;
+
+          let matchesPrice = true;
+          if (priceFilter) {
+            const [min, max] = priceFilter.split("-").map(Number);
+            matchesPrice =
+              product.priceNumber >= min && product.priceNumber <= max;
+          }
+
+          return (
+            matchesSearch && matchesCategory && matchesPrice && matchesCondition
+          );
+        });
+
+        loadProducts(filteredProducts);
+      }
+
+      function clearFilters() {
+        document.getElementById("search-input").value = "";
+        document.getElementById("search-input-mobile").value = "";
+        document.getElementById("category-filter").value = "";
+        document.getElementById("price-filter").value = "";
+        document.getElementById("condition-filter").value = "";
+        searchQuery = "";
+        filteredProducts = [...products];
+        loadProducts();
+      }
+
+      function openProductDetail(productId) {
+        currentProduct = products.find((p) => p.id === productId);
+        if (!currentProduct) return;
+
+        // Update breadcrumb
+        document.getElementById("breadcrumb-product").textContent =
+          currentProduct.name;
+
+        // Populate product details
+        document.getElementById("product-title").textContent =
+          currentProduct.name;
+        document.getElementById("product-price").textContent =
+          currentProduct.price;
+        document.getElementById("product-condition").textContent =
+          currentProduct.condition;
+        document.getElementById("product-location").textContent =
+          currentProduct.location;
+        document.getElementById("product-category").textContent =
+          currentProduct.category;
+        document.getElementById("product-description").innerHTML =
+          currentProduct.description.replace(/\n/g, "<br>");
+
+        // Update badges
+        document.getElementById("product-category-tag").textContent =
+          currentProduct.category;
+        document.getElementById("product-condition-badge").textContent =
+          currentProduct.condition;
+
+        // Setup carousel
+        setupCarousel(currentProduct.images);
+
+        // Show product detail
+        document.getElementById("product-detail").classList.remove("hidden");
+        document.body.style.overflow = "hidden";
+
+        // Update page title
+        document.title = `${currentProduct.name} - Yushop`;
+      }
+
+      function closeProductDetail() {
+        document.getElementById("product-detail").classList.add("hidden");
+        document.body.style.overflow = "auto";
+        currentProduct = null;
+        currentSlide = 0;
+        document.title = "Yushop - Preloved Items";
+      }
+
+      function setupCarousel(images) {
+        const track = document.getElementById("carousel-track");
+        const thumbnailNav = document.getElementById("thumbnail-nav");
+        const imageCounter = document.getElementById("image-counter");
+
+        track.innerHTML = "";
+        thumbnailNav.innerHTML = "";
+
+        images.forEach((image, index) => {
+          // Main carousel slides
+          const slide = document.createElement("div");
+          slide.className = "carousel-slide";
+          slide.innerHTML = `<img src="${image}" alt="Product ${
+            index + 1
+          }" class="w-full h-96 object-cover cursor-pointer image-loading" onclick="openImageModal('${image}')" onload="this.classList.remove('image-loading')">`;
+          track.appendChild(slide);
+
+          // Thumbnails
+          const thumbnail = document.createElement("button");
+          thumbnail.className = `flex-shrink-0 w-16 h-16 rounded border-2 overflow-hidden ${
+            index === 0 ? "border-yellow-400" : "border-gray-600"
+          } transition-all hover:border-yellow-300`;
+          thumbnail.innerHTML = `<img src="${image}" alt="Thumb ${
+            index + 1
+          }" class="w-full h-full object-cover image-loading" onload="this.classList.remove('image-loading')">`;
+          thumbnail.onclick = () => goToSlide(index);
+          thumbnailNav.appendChild(thumbnail);
+        });
+
+        currentSlide = 0;
+        updateCarousel();
+        updateImageCounter(images.length);
+      }
+
+      function updateImageCounter(totalImages) {
+        document.getElementById("image-counter").textContent = `${
+          currentSlide + 1
+        } / ${totalImages}`;
+      }
+
+      function nextSlide() {
+        if (currentProduct && currentSlide < currentProduct.images.length - 1) {
+          currentSlide++;
+          updateCarousel();
+          updateImageCounter(currentProduct.images.length);
+        }
+      }
+
+      function prevSlide() {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateCarousel();
+          updateImageCounter(currentProduct.images.length);
+        }
+      }
+
+      function goToSlide(index) {
+        currentSlide = index;
+        updateCarousel();
+        updateImageCounter(currentProduct.images.length);
+      }
+
+      function updateCarousel() {
+        const track = document.getElementById("carousel-track");
+        const thumbnails = document.querySelectorAll("#thumbnail-nav button");
+
+        track.style.transform = `translateX(-${currentSlide * 100}%)`;
+
+        thumbnails.forEach((thumb, index) => {
+          if (index === currentSlide) {
+            thumb.classList.remove("border-gray-600");
+            thumb.classList.add("border-yellow-400");
+          } else {
+            thumb.classList.remove("border-yellow-400");
+            thumb.classList.add("border-gray-600");
+          }
+        });
+      }
+
+      function openImageModal(imageSrc) {
+        document.getElementById("modal-image").src = imageSrc;
+        document.getElementById("image-modal").classList.add("active");
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeImageModal() {
+        document.getElementById("image-modal").classList.remove("active");
+        document.body.style.overflow = "hidden"; // Keep product detail overflow hidden
+      }
+
+      function contactWhatsApp() {
+        if (currentProduct) {
+          const message = `Halo, saya tertarik dengan ${currentProduct.name} seharga ${currentProduct.price}. Bisa info lebih lanjut?`;
+          const phoneNumber = "6281234567890"; // Ganti dengan nomor WhatsApp Anda
+          const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
+            message
+          )}`;
+          window.open(whatsappUrl, "_blank");
+        }
+      }
+
+      function shareProduct() {
+        if (currentProduct && navigator.share) {
+          navigator
+            .share({
+              title: currentProduct.name,
+              text: `${currentProduct.name} - ${currentProduct.price}`,
+              url: window.location.href,
+            })
+            .catch((err) => console.log("Error sharing:", err));
+        } else if (currentProduct) {
+          // Fallback for browsers that don't support Web Share API
+          const shareText = `${currentProduct.name} - ${currentProduct.price}\n${window.location.href}`;
+          if (navigator.clipboard) {
+            navigator.clipboard.writeText(shareText).then(() => {
+              showNotification("Link produk berhasil disalin!");
+            });
+          } else {
+            // Final fallback
+            const textArea = document.createElement("textarea");
+            textArea.value = shareText;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textArea);
+            showNotification("Link produk berhasil disalin!");
+          }
+        }
+      }
+
+      function showNotification(message) {
+        const notification = document.createElement("div");
+        notification.className =
+          "fixed top-20 right-6 bg-yellow-500 text-gray-900 px-6 py-3 rounded-lg font-semibold z-50 transform translate-x-full transition-transform duration-300";
+        notification.textContent = message;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+          notification.classList.remove("translate-x-full");
+        }, 100);
+
+        setTimeout(() => {
+          notification.classList.add("translate-x-full");
+          setTimeout(() => {
+            document.body.removeChild(notification);
+          }, 300);
+        }, 3000);
+      }
+
+      function scrollToProducts() {
+        document.getElementById("products").scrollIntoView({
+          behavior: "smooth",
+        });
+      }
+
+      function showPage(page) {
+        if (page === "home") {
+          document.getElementById("home").scrollIntoView({
+            behavior: "smooth",
+          });
+        }
+      }
+
+      function setupScrollAnimations() {
+        const observerOptions = {
+          threshold: 0.1,
+          rootMargin: "0px 0px -50px 0px",
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+            }
+          });
+        }, observerOptions);
+
+        // Observe all fade-in elements
+        document.querySelectorAll(".fade-in").forEach((el) => {
+          observer.observe(el);
+        });
+      }
+
+      function handleKeyboardNavigation(event) {
+        if (
+          document.getElementById("product-detail").classList.contains("hidden")
+        )
+          return;
+
+        switch (event.key) {
+          case "Escape":
+            closeProductDetail();
+            break;
+          case "ArrowLeft":
+            prevSlide();
+            break;
+          case "ArrowRight":
+            nextSlide();
+            break;
+        }
+      }
+
+      // Handle click outside modals
+      document.addEventListener("click", function (event) {
+        const imageModal = document.getElementById("image-modal");
+        if (event.target === imageModal) {
+          closeImageModal();
+        }
+      });
+
+      // Smooth scroll for anchor links
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute("href"));
+          if (target) {
+            target.scrollIntoView({
+              behavior: "smooth",
+            });
+          }
+        });
+      });
+
+      // Add loading states for images
+      function addImageLoadingStates() {
+        const images = document.querySelectorAll("img");
+        images.forEach((img) => {
+          img.addEventListener("load", function () {
+            this.classList.remove("image-loading");
+          });
+
+          img.addEventListener("error", function () {
+            this.classList.remove("image-loading");
+            this.src =
+              "https://via.placeholder.com/500x300/374151/9CA3AF?text=Image+Not+Found";
+          });
+        });
+      }
+
+      // Initialize error handling for images
+      document.addEventListener("DOMContentLoaded", addImageLoadingStates);
+
+      // PWA-like features
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", function () {
+          // Register service worker here if you want PWA functionality
+        });
+      }
+
+      // Performance optimization: Lazy loading for images
+      function setupLazyLoading() {
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const img = entry.target;
+              img.src = img.dataset.src;
+              img.classList.remove("image-loading");
+              observer.unobserve(img);
+            }
+          });
+        });
+
+        document.querySelectorAll("img[data-src]").forEach((img) => {
+          imageObserver.observe(img);
+        });
+      }
+
+      // Add smooth page transitions
+      function addPageTransitions() {
+        const style = document.createElement("style");
+        style.textContent = `
+                .page-transition {
+                    transition: opacity 0.3s ease-in-out;
+                }
+                .page-transition.fade-out {
+                    opacity: 0;
+                }
+            `;
+        document.head.appendChild(style);
+      }
+
+      // Initialize additional features
+      document.addEventListener("DOMContentLoaded", function () {
+        addPageTransitions();
+        setupLazyLoading();
+      });
+    </script>
+  </body>
+</html>
