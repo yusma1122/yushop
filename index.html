@@ -67,16 +67,40 @@
       .carousel-container {
         position: relative;
         overflow: hidden;
+        width: 100%;
+        height: 400px;
+        background: #374151;
+        border-radius: 8px;
       }
 
       .carousel-track {
         display: flex;
-        transition: transform 0.3s ease;
+        width: 100%;
+        height: 100%;
+        transition: transform 0.3s ease-in-out;
+        will-change: transform;
       }
 
       .carousel-slide {
-        min-width: 100%;
-        flex-shrink: 0;
+        flex: 0 0 100%;
+        width: 100%;
+        height: 100%;
+        position: relative;
+      }
+
+      .carousel-slide img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        user-select: none;
+      }
+
+      /* Media query untuk perangkat mobile */
+      @media (max-width: 768px) {
+        .carousel-track {
+          transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
       }
 
       .current-page {
@@ -1397,9 +1421,11 @@
           // Main carousel slides
           const slide = document.createElement("div");
           slide.className = "carousel-slide";
-          slide.innerHTML = `<img src="${image}" alt="Product ${
+          slide.innerHTML = `
+      <img src="${image}" alt="Product ${
             index + 1
-          }" class="w-full h-96 object-cover cursor-pointer image-loading" onclick="openImageModal('${image}')" onload="this.classList.remove('image-loading')">`;
+          }" class="cursor-pointer" onclick="openImageModal('${image}')">
+    `;
           track.appendChild(slide);
 
           // Thumbnails
@@ -1409,13 +1435,13 @@
           } transition-all hover:border-yellow-300`;
           thumbnail.innerHTML = `<img src="${image}" alt="Thumb ${
             index + 1
-          }" class="w-full h-full object-cover image-loading" onload="this.classList.remove('image-loading')">`;
+          }" class="w-full h-full object-cover">`;
           thumbnail.onclick = () => goToSlide(index);
           thumbnailNav.appendChild(thumbnail);
         });
 
         currentSlide = 0;
-        updateCarousel();
+        track.style.transform = "translateX(0%)";
         updateImageCounter(images.length);
       }
 
@@ -1451,16 +1477,15 @@
         const track = document.getElementById("carousel-track");
         const thumbnails = document.querySelectorAll("#thumbnail-nav button");
 
-        track.style.transform = `translateX(-${currentSlide * 100}%)`;
+        if (!track) return;
 
+        const translateValue = -(currentSlide * 100);
+        track.style.transform = `translateX(${translateValue}%)`;
+
+        // Update thumbnail borders
         thumbnails.forEach((thumb, index) => {
-          if (index === currentSlide) {
-            thumb.classList.remove("border-gray-600");
-            thumb.classList.add("border-yellow-400");
-          } else {
-            thumb.classList.remove("border-yellow-400");
-            thumb.classList.add("border-gray-600");
-          }
+          thumb.classList.toggle("border-yellow-400", index === currentSlide);
+          thumb.classList.toggle("border-gray-600", index !== currentSlide);
         });
       }
 
