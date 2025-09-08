@@ -434,16 +434,34 @@
 
     <!-- Filter Section -->
     <div
-      class="filter-container py-4"
+      class="filter-container py-2"
       id="filter-section"
       style="display: none"
     >
       <div class="container mx-auto px-6">
-        <div class="flex flex-wrap items-center justify-between gap-4">
-          <div class="flex flex-wrap items-center gap-4">
+        <!-- Filter Toggle Button -->
+        <div class="flex justify-between items-center mb-2">
+          <button 
+            id="filter-toggle" 
+            class="flex items-center text-yellow-400 hover:text-yellow-300 transition-colors"
+            onclick="toggleFilters()"
+          >
+            <span id="filter-toggle-text">Sembunyikan Filter</span>
+            <svg id="filter-toggle-icon" class="w-5 h-5 ml-1 transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+          <div class="text-sm text-gray-400 ml-4" id="results-count">
+            Menampilkan semua produk
+          </div>
+        </div>
+        
+        <!-- Filters Content -->
+        <div id="filters-content" class="py-2">
+          <div class="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-4">
             <select
               id="category-filter"
-              class="bg-gray-700 border border-yellow-500/30 text-white px-4 py-2 rounded-lg focus:border-yellow-400 focus:outline-none"
+              class="w-full sm:w-auto bg-gray-700 border border-yellow-500/30 text-white px-4 py-2 rounded-lg focus:border-yellow-400 focus:outline-none"
               onchange="applyFilters()"
             >
               <option value="">Semua Kategori</option>
@@ -455,7 +473,7 @@
 
             <select
               id="price-filter"
-              class="bg-gray-700 border border-yellow-500/30 text-white px-4 py-2 rounded-lg focus:border-yellow-400 focus:outline-none"
+              class="w-full sm:w-auto bg-gray-700 border border-yellow-500/30 text-white px-4 py-2 rounded-lg focus:border-yellow-400 focus:outline-none"
               onchange="applyFilters()"
             >
               <option value="">Semua Harga</option>
@@ -466,7 +484,7 @@
 
             <select
               id="condition-filter"
-              class="bg-gray-700 border border-yellow-500/30 text-white px-4 py-2 rounded-lg focus:border-yellow-400 focus:outline-none"
+              class="w-full sm:w-auto bg-gray-700 border border-yellow-500/30 text-white px-4 py-2 rounded-lg focus:border-yellow-400 focus:outline-none"
               onchange="applyFilters()"
             >
               <option value="">Semua Kondisi</option>
@@ -474,10 +492,6 @@
               <option value="Bekas 90%">Bekas 90%</option>
               <option value="Bekas 95%">Bekas 95%</option>
             </select>
-          </div>
-
-          <div class="text-sm text-gray-400" id="results-count">
-            Menampilkan semua produk
           </div>
         </div>
       </div>
@@ -1141,6 +1155,22 @@
 
       function showFilterSection() {
         document.getElementById("filter-section").style.display = "block";
+      }
+      
+      function toggleFilters() {
+        const filtersContent = document.getElementById("filters-content");
+        const toggleText = document.getElementById("filter-toggle-text");
+        const toggleIcon = document.getElementById("filter-toggle-icon");
+        
+        if (filtersContent.style.display === "none") {
+          filtersContent.style.display = "block";
+          toggleText.textContent = "Sembunyikan Filter";
+          toggleIcon.classList.add("rotate-180");
+        } else {
+          filtersContent.style.display = "none";
+          toggleText.textContent = "Tampilkan Filter";
+          toggleIcon.classList.remove("rotate-180");
+        }
       }
 
       function loadProducts(productsToShow = filteredProducts) {
